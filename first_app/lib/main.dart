@@ -42,32 +42,59 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                '$_counter',
-                style: Theme.of(context).textTheme.headline4,
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                SubmitButton(),
-                SubmitButton(),
-                ElevatedButton(
-                  onPressed: _incrementCounter,
-                  child: Text('ABCDEF'),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(50.0),
+                child: Image.network(
+                  'https://mis.tbs.tu.ac.th/wp-content/uploads/MSMIS-Triple-2020.png',
                 ),
-              ],
-            ),
-          ],
+              ),
+              Container(
+                margin: const EdgeInsets.only(bottom: 100.0),
+                padding: const EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  color: Colors.green.withOpacity(0.25),
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+                child: Image.asset(
+                  "images/AvatarMe.jpg",
+                  height: 500,
+                ),
+              ),
+              const Text(
+                'You have pushed the button this many times:',
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  '$_counter',
+                  style: Theme.of(context).textTheme.headline4,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _counter = _counter - 1;
+                      });
+                    },
+                    child: Icon(Icons.remove),
+                  ),
+                  ElevatedButton(
+                    onPressed: _incrementCounter,
+                    child: Icon(Icons.add),
+                  ),
+                ],
+              ),
+              CounterButton(),
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -85,6 +112,27 @@ class SubmitButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: () {},
       child: Text('Submit'),
+    );
+  }
+}
+
+class CounterButton extends StatefulWidget {
+  @override
+  State<CounterButton> createState() => _CounterButtonState();
+}
+
+class _CounterButtonState extends State<CounterButton> {
+  int _counter = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        setState(() {
+          _counter = _counter + 1;
+        });
+      },
+      child: Text('Counter : $_counter'),
     );
   }
 }
