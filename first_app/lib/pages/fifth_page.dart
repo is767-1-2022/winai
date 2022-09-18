@@ -113,6 +113,20 @@ class _FifthPageState extends State<FifthPage> {
                             'Processing save : $_firstName $_lastName $_password'),
                       ),
                     );
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LoginProfilePage(
+                          profile: LoginProfile(
+                            _firstName,
+                            _lastName,
+                            _password,
+                            25,
+                          ),
+                        ),
+                      ),
+                    );
                   }
                 },
                 child: Text('Validate and Save'),
@@ -120,6 +134,57 @@ class _FifthPageState extends State<FifthPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class LoginProfile {
+  final String firstName;
+  final String lastName;
+  final String password;
+  final int age;
+
+  const LoginProfile(
+    this.firstName,
+    this.lastName,
+    this.password,
+    this.age,
+  );
+}
+
+class LoginProfilePage extends StatelessWidget {
+  const LoginProfilePage({super.key, required this.profile});
+
+  final LoginProfile profile;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Login Profile'),
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('First name - ${profile.firstName}'),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('Last name - ${profile.lastName}'),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('Password - ******'),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('Age - ${profile.age}'),
+          ),
+        ],
       ),
     );
   }
