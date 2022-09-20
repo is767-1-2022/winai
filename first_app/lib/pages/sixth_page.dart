@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SixthPage extends StatefulWidget {
   @override
@@ -21,14 +22,18 @@ class _SixthPageState extends State<SixthPage> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Center(
-              child: Text('Your preference is - $_preference'),
+              child: Consumer<PreferenceModel>(
+                builder: (context, value, child) {
+                  return Text('Your preference is - ${value.meatChoice}');
+                },
+              ),
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
               onPressed: () async {
-                final result = await Navigator.push(
+                await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => PreferencePage(),
@@ -38,12 +43,9 @@ class _SixthPageState extends State<SixthPage> {
                 ScaffoldMessenger.of(context)
                   ..removeCurrentSnackBar()
                   ..showSnackBar(SnackBar(
-                    content: Text('$result'),
+                    content:
+                        Text('${context.read<PreferenceModel>().meatChoice}'),
                   ));
-
-                setState(() {
-                  _preference = result;
-                });
               },
               child: Text('Choose what you prefer'),
             ),
@@ -69,7 +71,8 @@ class PreferencePage extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pop(context, 'Beef');
+                context.read<PreferenceModel>().meatChoice = 'Beef';
+                Navigator.pop(context);
               },
               child: Text('Beef'),
             ),
@@ -78,7 +81,8 @@ class PreferencePage extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pop(context, 'Pork');
+                context.read<PreferenceModel>().meatChoice = 'Pork';
+                Navigator.pop(context);
               },
               child: Text('Pork'),
             ),
@@ -87,6 +91,7 @@ class PreferencePage extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
               onPressed: () {
+                context.read<PreferenceModel>().meatChoice = 'Chicken';
                 Navigator.pop(context, 'Chicken');
               },
               child: Text('Chicken'),
@@ -96,6 +101,7 @@ class PreferencePage extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
               onPressed: () {
+                context.read<PreferenceModel>().meatChoice = 'Fish';
                 Navigator.pop(context, 'Fish');
               },
               child: Text('Fish'),
@@ -104,5 +110,15 @@ class PreferencePage extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class PreferenceModel extends ChangeNotifier {
+  String _meatChoice = '';
+  get meatChoice => this._meatChoice;
+
+  set meatChoice(value) {
+    this._meatChoice = value;
+    notifyListeners();
   }
 }

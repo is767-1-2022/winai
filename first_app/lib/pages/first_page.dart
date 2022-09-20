@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'fifth_page.dart';
 
 class FirstPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('First page'),
+        title: Consumer<LoginProfileModel>(
+          builder: (context, value, child) {
+            return Text('Hello ${value.firstName} ${value.lastName}');
+          },
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.tiktok),

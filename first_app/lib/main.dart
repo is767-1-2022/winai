@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'pages/fifth_page.dart';
 import 'pages/first_page.dart';
@@ -9,7 +10,13 @@ import 'pages/sixth_page.dart';
 import 'pages/third_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (context) => PreferenceModel()),
+      ChangeNotifierProvider(create: (context) => LoginProfileModel()),
+    ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {

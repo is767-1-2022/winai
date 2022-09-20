@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class FifthPage extends StatefulWidget {
   @override
@@ -114,6 +115,12 @@ class _FifthPageState extends State<FifthPage> {
                       ),
                     );
 
+                    context.read<LoginProfileModel>()
+                      ..firstName = _firstName
+                      ..lastName = _lastName
+                      ..password = _password
+                      ..age = 25;
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -151,6 +158,36 @@ class LoginProfile {
     this.password,
     this.age,
   );
+}
+
+class LoginProfileModel extends ChangeNotifier {
+  String _firstName = '';
+  String _lastName = '';
+  String _password = '';
+  int _age = 0;
+  get firstName => this._firstName;
+  set firstName(value) {
+    this._firstName = value;
+    notifyListeners();
+  }
+
+  get lastName => this._lastName;
+  set lastName(value) {
+    this._lastName = value;
+    notifyListeners();
+  }
+
+  get password => this._password;
+  set password(value) {
+    this._password = value;
+    notifyListeners();
+  }
+
+  get age => this._age;
+  set age(value) {
+    this._age = value;
+    notifyListeners();
+  }
 }
 
 class LoginProfilePage extends StatelessWidget {
