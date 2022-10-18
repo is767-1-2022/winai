@@ -15,6 +15,7 @@ class _FifthPageState extends State<FifthPage> {
   late String _password;
 
   bool _hidePassword = true;
+  MainAxisAlignment _buttonAlignment = MainAxisAlignment.center;
 
   @override
   Widget build(BuildContext context) {
