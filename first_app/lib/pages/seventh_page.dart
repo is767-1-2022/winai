@@ -1,8 +1,7 @@
-import 'dart:async';
-import 'dart:convert';
-
+import 'package:first_app/controllers/todo_controller.dart';
+import 'package:first_app/models/todo_model.dart';
+import 'package:first_app/services/services.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 
 class SeventhPage extends StatefulWidget {
   @override
@@ -13,7 +12,7 @@ class _SeventhPageState extends State<SeventhPage> {
   List<Todo> todos = List.empty();
   bool isLoading = false;
 
-  TodoController contoller = TodoController(HttpServices());
+  TodoController contoller = TodoController(FirebaseServices());
 
   void initState() {
     super.initState();
@@ -27,6 +26,10 @@ class _SeventhPageState extends State<SeventhPage> {
     setState(() => todos = newTodos);
   }
 
+  void _updateTodo(Todo todo) {
+    contoller.updateTodo(todo);
+  }
+
   Widget get body => isLoading
       ? CircularProgressIndicator()
       : ListView.builder(
@@ -36,6 +39,7 @@ class _SeventhPageState extends State<SeventhPage> {
               return CheckboxListTile(
                 onChanged: (value) {
                   setState(() => todos[index].completed = value!);
+                  _updateTodo(todos[index]);
                 },
                 value: todos[index].completed,
                 title: Text(todos[index].title),
@@ -64,70 +68,5 @@ class _SeventhPageState extends State<SeventhPage> {
         child: Icon(Icons.add),
       ),
     );
-  }
-}
-
-class Todo {
-  final int userId;
-  final int id;
-  final String title;
-  bool completed;
-
-  Todo(this.userId, this.id, this.title, this.completed);
-
-  factory Todo.fromJson(Map<String, dynamic> json) {
-    return Todo(
-      json['userId'] as int,
-      json['id'] as int,
-      json['title'] as String,
-      json['completed'] as bool,
-    );
-  }
-}
-
-class AllTodos {
-  final List<Todo> todos;
-
-  AllTodos(this.todos);
-
-  factory AllTodos.fromJson(List<dynamic> json) {
-    List<Todo> todos;
-
-    todos = json.map((item) => Todo.fromJson(item)).toList();
-
-    return AllTodos(todos);
-  }
-}
-
-class HttpServices {
-  Client client = Client();
-
-  Future<List<Todo>> getTodos() async {
-    final response = await client
-        .get(Uri.parse('https://jsonplaceholder.typicode.com/todos'));
-
-    if (response.statusCode == 200) {
-      var all = AllTodos.fromJson(json.decode(response.body));
-      return all.todos;
-    } else {
-      throw Exception('Fail to load todos');
-    }
-  }
-}
-
-class TodoController {
-  final HttpServices services;
-  List<Todo> todos = List.empty();
-
-  StreamController<bool> onSyncController = StreamController();
-  Stream<bool> get onSync => onSyncController.stream;
-
-  TodoController(this.services);
-
-  Future<List<Todo>> fetchTodos() async {
-    onSyncController.add(true);
-    todos = await services.getTodos();
-    onSyncController.add(false);
-    return todos;
   }
 }

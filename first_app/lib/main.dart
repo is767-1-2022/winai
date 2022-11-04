@@ -1,16 +1,23 @@
-import 'package:first_app/pages/seventh_page.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'firebase_options.dart';
 import 'pages/fifth_page.dart';
 import 'pages/first_page.dart';
 import 'pages/fourth_page.dart';
 import 'pages/home_page.dart';
 import 'pages/second_page.dart';
+import 'pages/seventh_page.dart';
 import 'pages/sixth_page.dart';
 import 'pages/third_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (context) => PreferenceModel()),
