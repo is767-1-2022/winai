@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,6 +13,7 @@ class _FifthPageState extends State<FifthPage> {
   final _formKey = GlobalKey<FormState>();
   late String _firstName;
   late String _lastName;
+  late String _email;
   late String _password;
 
   bool _hidePassword = true;
@@ -68,6 +70,25 @@ class _FifthPageState extends State<FifthPage> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Email',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your email';
+                  }
+
+                  return null;
+                },
+                onSaved: (newValue) {
+                  _email = newValue!;
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
                 obscureText: _hidePassword,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
@@ -105,16 +126,50 @@ class _FifthPageState extends State<FifthPage> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                            'Processing save : $_firstName $_lastName $_password'),
-                      ),
-                    );
+                    var msg = "Create user";
+
+                    try {
+                      final credential = await FirebaseAuth.instance
+                          .createUserWithEmailAndPassword(
+                        email: _email,
+                        password: _password,
+                      );
+                      msg = "Create user successfully.";
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('$msg'),
+                        ),
+                      );
+                    } on FirebaseAuthException catch (e) {
+                      if (e.code == 'weak-password') {
+                        print('The password provided is too weak.');
+                        msg = 'The password provided is too weak.';
+                      } else if (e.code == 'email-already-in-use') {
+                        print('The account already exists for that email.');
+                        msg = 'The account already exists for that email.';
+                      }
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('$msg'),
+                        ),
+                      );
+                      return;
+                    } catch (e) {
+                      print(e);
+                      msg = 'Error ${e.toString()}';
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('$msg'),
+                        ),
+                      );
+                      return;
+                    }
 
                     context.read<LoginProfileModel>()
                       ..firstName = _firstName
@@ -137,7 +192,45 @@ class _FifthPageState extends State<FifthPage> {
                     );
                   }
                 },
-                child: Text('Validate and Save'),
+                child: Text('Create user'),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    _formKey.currentState!.save();
+
+                    var msg = '';
+                    try {
+                      final credential = await FirebaseAuth.instance
+                          .signInWithEmailAndPassword(
+                              email: _email, password: _password);
+                      msg = "Login successfully.";
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('$msg'),
+                        ),
+                      );
+                    } on FirebaseAuthException catch (e) {
+                      if (e.code == 'user-not-found') {
+                        print('No user found for that email.');
+                        msg = 'No user found for that email.';
+                      } else if (e.code == 'wrong-password') {
+                        print('Wrong password provided for that user.');
+                        msg = 'Wrong password provided for that user.';
+                      }
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('$msg'),
+                        ),
+                      );
+                    }
+                  }
+                },
+                child: Text('Log in'),
               ),
             ),
           ],

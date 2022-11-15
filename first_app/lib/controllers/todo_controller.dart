@@ -20,6 +20,6 @@ class TodoController {
   }
 
   void updateTodo(Todo todo) async {
-    // services.update(todo);
+    services.update(todo);
   }
 }

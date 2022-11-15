@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:first_app/models/todo_model.dart';
 import 'package:http/http.dart';
@@ -11,6 +10,13 @@ class FirebaseServices {
 
     AllTodos todos = AllTodos.fromSnapshot(snapshot);
     return todos.todos;
+  }
+
+  void update(Todo todo) async {
+    print('Updating todo id=${todo.id}');
+    await FirebaseFirestore.instance.collection('todos').doc(todo.id).update({
+      'completed': todo.completed,
+    });
   }
 }
 

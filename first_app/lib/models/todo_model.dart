@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Todo {
   final int userId;
-  final int id;
+  String id;
   final String title;
   bool completed;
 
@@ -11,7 +11,7 @@ class Todo {
   factory Todo.fromJson(Map<String, dynamic> json) {
     return Todo(
       json['userId'] as int,
-      json['id'] as int,
+      json['id'] as String,
       json['title'] as String,
       json['completed'] as bool,
     );
@@ -33,7 +33,10 @@ class AllTodos {
 
   factory AllTodos.fromSnapshot(QuerySnapshot s) {
     List<Todo> todos = s.docs.map((DocumentSnapshot ds) {
-      return Todo.fromJson(ds.data() as Map<String, dynamic>);
+      Todo todo = Todo.fromJson(ds.data() as Map<String, dynamic>);
+      todo.id = ds.id;
+      print(ds.id);
+      return todo;
     }).toList();
 
     return AllTodos(todos);
